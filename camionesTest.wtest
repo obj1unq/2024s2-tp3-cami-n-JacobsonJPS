@@ -78,4 +78,31 @@ describe "Test de Camión de Transporte" {
     assert.equals(1000, camion.pesoTotal())  // El camión está vacío pero su tara sigue pesando
   }
 
+
+
+test "El camión lanza excepción al intentar descargar un objeto inexistente" {
+    camion.cargar(knightRider)
+    assert.throwsExceptionWithMessage("La cosa no está en el camión", {camion.descargar(bumblebee)})  // Bumblebee no ha sido cargado, debería lanzar excepción
+    
 }
+
+test "El camión lanza excepción si intenta circular en ruta peligrosa" {
+    camion.cargar(bumblebee)  // Bumblebee en modo robot, peligrosidad = 30
+
+    assert.throwsExceptionWithMessage("El camión no puede circular por la ruta 9", {ruta9.validarViaje(camion)})  // Esto debería lanzar la excepción
+    
+}
+
+test "El camión lanza excepción si el destino no puede recibir la carga" {
+    camion.cargar(knightRider)  // 1 bulto
+    camion.cargar(bumblebee)    // 2 bultos
+    almacen.maxBultos(2)       // El almacén solo puede recibir hasta 2 bultos
+
+    assert.throwsExceptionWithMessage("El destino no puede recibir la carga", {camion.transportar(almacen, caminoVecinal)})  // Esto debería fallar ya que el almacén solo soporta 2 bultos
+    
+}
+
+}
+
+
+
