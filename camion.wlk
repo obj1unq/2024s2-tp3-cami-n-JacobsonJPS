@@ -7,8 +7,13 @@ object camion {
 	const tara = 1000
 		
 	method cargar(unaCosa) {
-		cosas.add(unaCosa)
-		unaCosa.reaccionarACarga()
+		if (not self.excedidoDePeso()){
+			cosas.add(unaCosa)
+			unaCosa.reaccionarACarga()
+		}
+		else {
+			self.error("No se puede cargar objetos porque excede el peso maximo del camion")
+		}
 		
 	}
 
@@ -60,7 +65,7 @@ object camion {
 	}
 
 	method objetosMasPeligrososQue(cosa) {
-		return cosas.filter({cosa => cosa.nivelPeligrosidad() > cosa.nivelPeligrosidad()})
+		return cosas.filter({cosa => cosa.nivelPeligrosidad() > cosa.nivelPeligrosidad()}).set()
 	}
 
 	method puedeCircularEnRuta(nivelMaximoPeligrosidad){
