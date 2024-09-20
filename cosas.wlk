@@ -178,34 +178,48 @@ object residuosRadioactivos {
 
 object embalajeSeguridad {
 	
-	const contenido = #{vacio}
+	const contenido = #{}
 
 	method cantidadBultos() { return 2} 
 
 	method embalarObjecto(objeto){
-		contenido.remove(vacio)
 		contenido.add(objeto)
 	}
 
 	method desEmbalarObjecto(objeto){
-		contenido.remove(objeto)
-		contenido.add(vacio)
+		if(self.validarSiEstaEmbalado(objeto)){
+			contenido.remove(objeto)
+		}
+		else {
+			self.error("No está embalado" + objeto)
+		}
+		
 	}
+
+	method validarSiEstaEmbalado(objeto){
+		return contenido.contains(objeto)
+	}
+
+	method hayAlgoEmbalado(){
+		return contenido.isNotEmpty()
+	}
+
 	
 	method peso() { 
-		return contenido.peso()
+		return if(self.hayAlgoEmbalado()){
+			 		contenido.peso()
+				}
+				else 0
 	}
 
 
 	method nivelPeligrosidad() { 
-		return contenido.nivelPeligrosidad() / 2
+		return  if(self.hayAlgoEmbalado()) {
+					contenido.nivelPeligrosidad() / 2
+				}else 0
 	}
 
 	method reaccionarACarga() {}
 }
 
-object vacio {
-	method peso() = 0
-	method nivelPeligrosidad() = 0
-}
 ///////////////////////////////////////////////////////////
