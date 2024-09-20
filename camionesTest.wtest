@@ -1,0 +1,81 @@
+import cosas.*
+import lugares.*
+import rutas.*
+import camion.*
+
+describe "Test de Camión de Transporte" {
+
+  test "El camión puede cargar a Knight Rider y calcular el peso total" {
+    camion.cargar(knightRider)
+    assert.equals(1500, camion.pesoTotal())  // 1000 (tara) + 500 (Knight Rider)
+  }
+
+  test "El camión excede el peso máximo al cargar varios objetos pesados" {
+    camion.cargar(knightRider)
+    camion.cargar(bumblebee)
+    paqueteDeLadrillos.cantidadLadrillos(400)  // Pone 400 ladrillos
+    camion.cargar(paqueteDeLadrillos)
+    
+    assert.equals(true, camion.excedidoDePeso()) // 1000 (tara) + 500 + 800 + (400 * 2) = 2500, excedido de peso.
+  }
+
+  test "El camión identifica si todos los pesos son pares" {
+    camion.cargar(knightRider)
+    camion.cargar(paqueteDeLadrillos)
+    paqueteDeLadrillos.cantidadLadrillos(50)  // 50 ladrillos (peso par)
+
+    assert.equals(true, camion.todoPesoPar())
+  }
+
+  test "El camión no puede circular por ruta 9 con objetos peligrosos" {
+    camion.cargar(bumblebee)  // Pasa a modo robot automáticamente, peligrosidad = 30
+    assert.notThat(camion.puedeCircularEnRuta(11))  // Nivel máximo permitido es 11, pero bumblebee en robot tiene peligrosidad 30
+  }
+
+  test "El camión puede circular en caminos vecinales si no excede el peso" {
+    camion.cargar(knightRider)
+    camion.cargar(paqueteDeLadrillos)
+    paqueteDeLadrillos.cantidadLadrillos(50)  // 1000 + 500 + (50 * 2) = 1100
+
+    caminoVecinal.pesoMaximoSoportado(1500)  // Peso máximo de camino vecinal es 1500
+    assert.equals(true, camion.puedeCircularEnRuta(11))
+  }
+
+  test "El camión encuentra el objeto más pesado" {
+    camion.cargar(knightRider)
+    camion.cargar(bumblebee)
+    paqueteDeLadrillos.cantidadLadrillos(400)  // 800 kg
+    camion.cargar(paqueteDeLadrillos)
+    
+
+    assert.equals(paqueteDeLadrillos, camion.cosaMasPesada())  // Paquete de ladrillos es el más pesado
+  }
+
+  test "El camión descarga un objeto" {
+    camion.cargar(knightRider)
+    camion.descargar(knightRider)
+
+    assert.equals(false, camion.hayAlgunoQuePesa(500))  // Knight Rider fue descargado
+  }
+
+  test "El almacén no puede recibir si excede el máximo de bultos" {
+    camion.cargar(knightRider)
+    camion.cargar(paqueteDeLadrillos)
+    paqueteDeLadrillos.cantidadLadrillos(150)  // 2 bultos
+
+    almacen.maxBultos(2)  // El almacén solo puede recibir hasta 2 bultos
+    assert.equals(false, almacen.puedeRecibir(camion))
+  }
+
+  test "El camión transporta correctamente la carga al almacén" {
+    camion.cargar(knightRider)
+    camion.cargar(bumblebee)
+
+    almacen.maxBultos(5)
+    camion.transportar(almacen, caminoVecinal)
+
+    assert.equals(3, almacen.cantidadBultosAlmacen())  // Knight Rider y Bumblebee deben estar en el almacén
+    assert.equals(1000, camion.pesoTotal())  // El camión está vacío pero su tara sigue pesando
+  }
+
+}
