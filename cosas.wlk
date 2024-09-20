@@ -178,17 +178,17 @@ object residuosRadioactivos {
 
 object embalajeSeguridad {
 	
-	const contenido = #{}
+	var contenido = null
 
 	method cantidadBultos() { return 2} 
 
 	method embalarObjecto(objeto){
-		contenido.add(objeto)
+		contenido = objeto
 	}
 
 	method desEmbalarObjecto(objeto){
-		if(self.validarSiEstaEmbalado(objeto)){
-			contenido.remove(objeto)
+		if(contenido == objeto){
+			contenido == null
 		}
 		else {
 			self.error("No está embalado" + objeto)
@@ -197,26 +197,26 @@ object embalajeSeguridad {
 	}
 
 	method validarSiEstaEmbalado(objeto){
-		return contenido.contains(objeto)
+		return contenido == objeto
 	}
 
 	method hayAlgoEmbalado(){
-		return contenido.isNotEmpty()
+		return contenido != null
 	}
 
 	
 	method peso() { 
-		return if(self.hayAlgoEmbalado()){
-			 		contenido.peso()
+		return if(contenido == null){
+			 		0
 				}
-				else 0
+				else contenido.peso()
 	}
 
 
 	method nivelPeligrosidad() { 
-		return  if(self.hayAlgoEmbalado()) {
-					contenido.nivelPeligrosidad() / 2
-				}else 0
+		return  if(contenido == null) {
+					0
+				}else contenido.nivelPeligrosidad() / 2
 	}
 
 	method reaccionarACarga() {}
